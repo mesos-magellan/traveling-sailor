@@ -3,26 +3,8 @@
 
 import math
 import random
-from abc import ABCMeta, abstractmethod
 
-
-class Problem(object):
-    __metaclass__ = ABCMeta
-
-    def __init__(self):
-        self.init()
-
-    @abstractmethod
-    def init(self, *args, **kwargs):
-        raise NotImplementedError
-
-    @abstractmethod
-    def fitness_score(self, key):
-        raise NotImplementedError
-
-    @abstractmethod
-    def mutation(self, key):
-        raise NotImplementedError
+from enrique.problem import Problem
 
 
 class TSPSA(Problem):
@@ -60,7 +42,7 @@ class TSPSA(Problem):
         state[a], state[b] = state[b], state[a]
         return state
 
-    def energy(self, state):
+    def fitness_score(self, state):
         """Calculates the length of the route."""
         e = 0
         for i in range(len(state)):
