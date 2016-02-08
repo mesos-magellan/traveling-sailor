@@ -11,10 +11,6 @@ class TSPSA(Problem):
     def init(self, cities):
         self.cities = cities
 
-         # initial state, a randomly-ordered itinerary
-        init_state = list(cities.keys())
-        random.shuffle(init_state)
-
         # create a distance matrix
         self.distance_matrix = {}
         for ka, va in cities.items():
@@ -37,6 +33,10 @@ class TSPSA(Problem):
 
     def mutation(self, state):
         """Swaps two cities in the route."""
+        if state == "" or state is None:
+             # initial state, a randomly-ordered itinerary
+            state = self.cities.keys()
+            random.shuffle(state)
         a = random.randint(0, len(state) - 1)
         b = random.randint(0, len(state) - 1)
         state[a], state[b] = state[b], state[a]
