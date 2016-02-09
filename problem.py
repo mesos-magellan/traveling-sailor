@@ -43,9 +43,10 @@ class Problem(Annealer):
                 else:
                     self.distance_matrix[ka][kb] = distance(va, vb)
 
+        if not state:
             # initial state, a randomly-ordered itinerary
-        state = list(cities.keys())
-        random.shuffle(state)
+            state = cities.keys()
+            random.shuffle(state)
 
         super(Problem, self).__init__(state)  # important!
         self.copy_strategy = "slice"
