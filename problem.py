@@ -39,7 +39,7 @@ class Problem(Annealer):
         state = list(cities.keys())
         random.shuffle(state)
 
-        super(TSPSA, self).__init__(state)  # important!
+        super(Problem, self).__init__(state)  # important!
         self.copy_strategy = "slice"
 
     def move(self, state=None):
