@@ -70,9 +70,6 @@ class Problem(Annealer):
         return e
 
 
-# XXX We are packaging the data with the task for the moment
-# latitude and longitude for the twenty largest U.S. cities
-
 def read(filename):
         """Read and return `filename` in root dir of project and return string"""
         here = os.path.abspath(os.path.dirname(__file__))
