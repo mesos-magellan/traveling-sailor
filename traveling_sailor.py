@@ -16,13 +16,13 @@ def distance(a, b):
                      math.cos(lat1) * math.cos(lat2) * math.cos(lon1 - lon2)) * R
 
 
-class TSPSA(Annealer):
+class Problem(Annealer):
+    """Traveling Salesman Problem Annealer
 
-    """Test annealer with a travelling salesman problem.
+    :param dict job_data: Unused currently
+    :param list state: state of the current annealer process
     """
-
-    # pass extra data (the distance matrix) into the constructor
-    def __init__(self, cities, state=None):
+    def __init__(self, job_data, state):
         self.cities = cities
 
         # create a distance matrix
@@ -40,6 +40,7 @@ class TSPSA(Annealer):
         random.shuffle(state)
 
         super(TSPSA, self).__init__(state)  # important!
+        self.copy_strategy = "slice"
 
     def move(self, state=None):
         """Swaps two cities in the route."""
@@ -59,3 +60,29 @@ class TSPSA(Annealer):
         for i in range(len(state)):
             e += self.distance_matrix[state[i-1]][state[i]]
         return e
+
+
+# XXX We are packaging the data with the task for the moment
+# latitude and longitude for the twenty largest U.S. cities
+cities = {
+    'New York City': (40.72, 74.00),
+    'Los Angeles': (34.05, 118.25),
+    'Chicago': (41.88, 87.63),
+    'Houston': (29.77, 95.38),
+    'Phoenix': (33.45, 112.07),
+    'Philadelphia': (39.95, 75.17),
+    'San Antonio': (29.53, 98.47),
+    'Dallas': (32.78, 96.80),
+    'San Diego': (32.78, 117.15),
+    'San Jose': (37.30, 121.87),
+    'Detroit': (42.33, 83.05),
+    'San Francisco': (37.78, 122.42),
+    'Jacksonville': (30.32, 81.70),
+    'Indianapolis': (39.78, 86.15),
+    'Austin': (30.27, 97.77),
+    'Columbus': (39.98, 82.98),
+    'Fort Worth': (32.75, 97.33),
+    'Charlotte': (35.23, 80.85),
+    'Memphis': (35.12, 89.97),
+    'Baltimore': (39.28, 76.62)
+}
