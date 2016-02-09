@@ -18,16 +18,54 @@
 
   <body>
     <div id="map"></div>
-    <script src="flightpath.js"></script>
+    <script src="cities.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
     <script>
 
-function initMap() {
-  var map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 3,
-    center: {lat: 0, lng: -180},
-    mapTypeId: google.maps.MapTypeId.TERRAIN
+$.urlParam = function(name){
+  var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+  return results[1] || 0;
+}
+var map = null;
+var flightPath = null;
+
+function initPath() {
+  var jobID = $.urlParam("jobID");
+
+  $.ajax({
+    dataType: "json",
+    type : "GET",
+    url: 'http://10.144.144.11:4567/api/job/' + jobID,
+    success: initMap
   });
-  var flightPath = new google.maps.Polyline({
+}
+
+function initMap(data) {
+  if(map == null) {
+    map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 2,
+      center: {lat: 0, lng: 0},
+      mapTypeId: google.maps.MapTypeId.TERRAIN
+    });
+  }
+
+  var bestPath = $.parseJSON(data.best_location);
+  var flightPlanCoordinates = [];
+
+  for (var i = bestPath.length - 1; i >= 0; i--) {
+    var city = {lat: cities[bestPath[i]][0], lng: cities[bestPath[i]][1]}
+    flightPlanCoordinates.push(city);
+  };
+
+  if(bestPath.length > 1) {
+    flightPlanCoordinates.push(flightPlanCoordinates[0]);
+  }
+
+  if(flightPath != null) {
+    flightPath.setMap(null);
+  }
+
+  flightPath = new google.maps.Polyline({
     path: flightPlanCoordinates,
     geodesic: true,
     strokeColor: '#FF0000',
@@ -36,10 +74,12 @@ function initMap() {
   });
 
   flightPath.setMap(map);
+
+  setInterval(initPath, 5000);
 }
 
     </script>
     <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLpmJq5Jyq-eZinkUeVF-ku1iVI4ANNz0&signed_in=true&callback=initMap"></script>
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLpmJq5Jyq-eZinkUeVF-ku1iVI4ANNz0&signed_in=true&callback=initPath"></script>
   </body>
 </html>
