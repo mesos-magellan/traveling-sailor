@@ -28,6 +28,7 @@ $.urlParam = function(name){
 }
 var map = null;
 var flightPath = null;
+var cityDots = [];
 
 function initPath() {
   var jobID = $.urlParam("jobID");
@@ -75,14 +76,20 @@ function initMap(data) {
 
   flightPath.setMap(map);
 
+  for(var i = cityDots.length - 1; i >= 0; i--) {
+    cityDots[i].setMap(null);
+    cityDots.pop();
+  }
+
   for (var i = bestPath.length - 1; i >= 0; i--) {
-    var cityCircle = new google.maps.Circle({
+    var cityDot = new google.maps.Circle({
       fillColor: '#000000',
       fillOpacity: 1,
       map: map,
       center: {lat: cities[bestPath[i]][0], lng: cities[bestPath[i]][1]},
       radius: 10000
     });
+    cityDots.push(cityDot);
   }
 
   if(data.current_state == "RUNNING") {
