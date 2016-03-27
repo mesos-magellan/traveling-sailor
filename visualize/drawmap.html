@@ -35,7 +35,7 @@ function initPath() {
   $.ajax({
     dataType: "json",
     type : "GET",
-    url: 'http://10.144.144.11:4567/api/job/' + jobID,
+    url: 'http://10.144.144.21:4567/api/job/' + jobID,
     success: initMap
   });
 }
@@ -75,7 +75,9 @@ function initMap(data) {
 
   flightPath.setMap(map);
 
-  setInterval(initPath, 5000);
+  if(data.current_state == "RUNNING") {
+    setTimeout(initPath, 5000);
+  }
 }
 
     </script>
