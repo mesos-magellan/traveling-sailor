@@ -1,1 +1,1 @@
--e git://github.com/mesos-magellan/pyrallelsa
+-e git+git://github.com/mesos-magellan/pyrallelsa#egg=pyrallelsa
