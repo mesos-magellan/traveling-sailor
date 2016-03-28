@@ -18,8 +18,10 @@
 
   <body>
     <div id="map"></div>
+    <script src="https://code.jquery.com/jquery-2.2.2.min.js" integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <script src="cities.js"></script>
-    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script src="config.js"></script>
     <script>
 
 $.urlParam = function(name){
@@ -36,12 +38,20 @@ function initPath() {
   $.ajax({
     dataType: "json",
     type : "GET",
-    url: 'http://10.144.144.21:4567/api/job/' + jobID,
-    success: initMap
+    url: SCHEDULER_API_URL() + 'job/' + jobID,
+    success: initMap,
+    error: failedMapLoad
   });
 }
 
 function initMap(data) {
+  RESET_FAILED_ATTEMPTS();
+  var bestPath = $.parseJSON(data.best_location);
+  if(bestPath.length == 0) {
+    if(data.current_state == "RUNNING") setTimeout(initPath, REFRESH_TIME);
+    return;
+  }
+
   if(map == null) {
     map = new google.maps.Map(document.getElementById('map'), {
       zoom: 2,
@@ -50,7 +60,6 @@ function initMap(data) {
     });
   }
 
-  var bestPath = $.parseJSON(data.best_location);
   var flightPlanCoordinates = [];
 
   for (var i = bestPath.length - 1; i >= 0; i--) {
@@ -93,8 +102,14 @@ function initMap(data) {
   }
 
   if(data.current_state == "RUNNING") {
-    setTimeout(initPath, 5000);
+    setTimeout(initPath, REFRESH_TIME);
   }
+}
+
+function failedMapLoad(jqXHR, textStatus, errorThrown) {
+  NEXT_SCHEDULER_URL();
+  sleep(100);
+  initPath();
 }
 
     </script>
